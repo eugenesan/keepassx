@@ -32,6 +32,7 @@ include(CheckCXXSourceCompiles)
 option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_GUI_TESTS "Enable building of GUI tests" OFF)
 option(WITH_CXX11 "Build with the C++ 11 standard" ON)
+option(WITH_TOTP "Enable Timed One-Time Password support (TOTP)" OFF)
 
 set(KEEPASSX_VERSION "2.0.3")
 set(KEEPASSX_VERSION_NUM "2.0.3")
@@ -160,6 +161,13 @@ if(NOT (${GCRYPT_VERSION_STRING} VERSION_LESS "1.6.0"))
   set(GCRYPT_HAS_SALSA20 1)
 endif()
 
+if (WITH_TOTP)
+  find_package(Oath REQUIRED)
+  # Used later for moc
+  set(def_totp "-DWITH_TOTP")
+  add_gcc_compiler_flags(${def_totp})
+endif()
+
 find_package(LibMicroHTTPD REQUIRED)
 
 find_package(QJSON REQUIRED)
@@ -202,6 +210,9 @@ if(UNIX)
 endif()
 
 include_directories(SYSTEM ${GCRYPT_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR})
+if (WITH_TOTP)
+  include_directories(${OATH_INCLUDE_DIR})
+endif()
 
 if(NOT (${CMAKE_VERSION} VERSION_LESS 2.8.3))
   set(PRINT_SUMMARY ON)
