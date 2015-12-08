@@ -267,7 +267,7 @@ if(MINGW)
 endif()
 
 qt4_wrap_ui(keepassx_SOURCES ${keepassx_FORMS})
-qt4_wrap_cpp(keepassx_SOURCES ${keepassx_MOC} OPTIONS ${def_totp})
+qt4_wrap_cpp(keepassx_SOURCES ${keepassx_MOC})
 
 add_library(keepassx_core STATIC ${keepassx_SOURCES})
 set_target_properties(keepassx_core PROPERTIES COMPILE_DEFINITIONS KEEPASSX_BUILDING_CORE)
@@ -281,10 +281,8 @@ target_link_libraries(${PROGNAME}
                       ${QT_QTGUI_LIBRARY}
                       ${QT_QTNETWORK_LIBRARY}
                       ${GCRYPT_LIBRARIES}
-                      ${ZLIB_LIBRARIES})
-if (WITH_TOTP)
-  target_link_libraries(${PROGNAME} ${OATH_LIBRARIES})
-endif()
+                      ${ZLIB_LIBRARIES}
+                      ${OATH_LIBRARIES})
 
 set_target_properties(${PROGNAME} PROPERTIES ENABLE_EXPORTS ON)
 
