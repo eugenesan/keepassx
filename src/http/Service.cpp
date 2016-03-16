@@ -182,7 +182,7 @@ bool Service::removeFirstDomain(QString & hostname)
     if (pos < 0)
         return false;
     hostname = hostname.mid(pos + 1);
-    return !hostname.isEmpty();
+    return !hostname.isEmpty() && hostname.indexOf(".") >= 0;
 }
 
 QList<Entry*> Service::searchEntries(Database* db, const QString& hostname)
