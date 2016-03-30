@@ -146,7 +146,7 @@ if(WITH_TESTS)
   enable_testing()
 endif(WITH_TESTS)
 
-set(QT_REQUIRED_MODULES QtCore QtGui QtTest)
+set(QT_REQUIRED_MODULES QtCore QtGui QtNetwork QtTest)
 
 find_package(Qt4 4.6.0 REQUIRED ${QT_REQUIRED_MODULES})
 include(${QT_USE_FILE})

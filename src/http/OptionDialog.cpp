@@ -42,6 +42,7 @@ void OptionDialog::loadSettings()
         ui->sortByUsername->setChecked(true);
     else
         ui->sortByTitle->setChecked(true);
+    ui->httpHost->setText(settings.httpHost());
     ui->httpPort->setText(QString::number(settings.httpPort()));
 
 /*
@@ -69,6 +70,7 @@ void OptionDialog::saveSettings()
     settings.setUnlockDatabase(ui->unlockDatabase->isChecked());
     settings.setMatchUrlScheme(ui->matchUrlScheme->isChecked());
     settings.setSortByUsername(ui->sortByUsername->isChecked());
+    settings.setHttpHost(ui->httpHost->text());
     settings.setHttpPort(ui->httpPort->text().toInt());
 
 /*
