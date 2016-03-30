@@ -3,7 +3,7 @@ require 'formula'
 class Keepassx < Formula
   homepage 'http://www.keepassx.org'
   url "https://github.com/eugenesan/keepassx.git", :branch => "2.0-http-totp"
-  version "2.0-http-totp"
+  version "2.0.2-http-totp-r2"
   head "https://github.com/eugenesan/keepassx.git", :branch => "master"
 
   depends_on 'cmake'
