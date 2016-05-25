@@ -323,23 +323,21 @@ void Server::request_completed(void *, struct MHD_Connection *,
 
 void Server::start(void)
 {
-    bool nohost = true;
-    struct sockaddr_in6 as;
-    struct sockaddr_in6 *ss = &as;
-
     if (m_started)
         return;
 
+    bool nohost = true;
     int port = HttpSettings::httpPort();
 
     QHostInfo info = QHostInfo::fromName(HttpSettings::httpHost());
     if (!info.addresses().isEmpty()) {
+        void* addrx = NULL;
         unsigned int flags = MHD_USE_SELECT_INTERNALLY;
         QHostAddress address = info.addresses().first();
 
         if (address.protocol() == QAbstractSocket::IPv4Protocol) {
-            struct sockaddr_in* addr = (struct sockaddr_in*)ss;
-            memset(addr, 0, sizeof(struct sockaddr_in));
+            struct sockaddr_in *addr = static_cast<struct sockaddr_in*>(calloc(1, sizeof(struct sockaddr_in)));
+            addrx = static_cast<void*>(addr);
             addr->sin_family = AF_INET;
             addr->sin_port = htons(HttpSettings::httpPort());
             addr->sin_addr.s_addr = htonl(address.toIPv4Address());
@@ -347,8 +345,8 @@ void Server::start(void)
             //qWarning("HTTPPlugin: IPv4 host configured");
         } else {
             if (MHD_YES == MHD_is_feature_supported(MHD_FEATURE_IPv6)) {
-                struct sockaddr_in6* addr = (struct sockaddr_in6*)ss;
-                memset(addr, 0, sizeof(struct sockaddr_in6));
+                struct sockaddr_in6 *addr = static_cast<struct sockaddr_in6*>(calloc(1, sizeof(struct sockaddr_in6)));
+                addrx = static_cast<void*>(addr);
                 addr->sin6_family = AF_INET6;
                 addr->sin6_port = htons(HttpSettings::httpPort());
                 memcpy(&addr->sin6_addr, address.toIPv6Address().c, 16);
@@ -370,7 +368,7 @@ void Server::start(void)
                                                    MHD_OPTION_NOTIFY_COMPLETED,
                                                    this->request_completed, NULL,
                                                    MHD_OPTION_SOCK_ADDR,
-                                                   ss,
+                                                   addrx,
                                                    MHD_OPTION_END))) {
                 nohost = true;
                 qWarning("HTTPPlugin: Failed to bind to configured host!");
@@ -378,7 +376,11 @@ void Server::start(void)
                 nohost = false;
                 //qWarning("HTTPPlugin: Binded to configured host.");
             }
+
         }
+
+        if (addrx != NULL)
+            free(addrx);
     }
 
     if (nohost) {
